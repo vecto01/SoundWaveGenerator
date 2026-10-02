@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ctx.strokeStyle = '#000';
         ctx.lineWidth = 2;
         ctx.beginPath();
-        for (let i = 0; i <= 100; i++) {
+        for (let i = 0; i <= 50; i++) {
             const x = i * xStep;
             let y = 0;
             switch (currentWaveType) {

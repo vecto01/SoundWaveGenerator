@@ -47,11 +47,20 @@ const stopBtn = document.getElementById('stop-btn');
 const waveCanvas = document.getElementById('wave-canvas');
 const ctx = waveCanvas.getContext('2d');
 
-// AudioContext для генерации звука
+// AudioContext и Web Worker для генерации звука
 let audioContext;
-let oscillator;
-let gainNode;
+let worker;
 let animationId;
+
+// Инициализация Web Worker
+function initWorker() {
+    worker = new Worker('worker.js');
+    worker.onmessage = function(e) {
+        if (e.data.type === 'soundGenerated') {
+            console.log('Звук сгенерирован в Worker', e.data.data);
+        }
+    };
+}
 
 // Проверка поддержки AudioWorklet
 function initAudioContext() {
@@ -229,24 +238,18 @@ function playSound() {
         initAudioContext();
     }
     
-    oscillator = audioContext.createOscillator();
-    gainNode = audioContext.createGain();
+    if (!worker) {
+        initWorker();
+    }
     
-    oscillator.type = settings.waveType;
-    oscillator.frequency.value = settings.frequency;
-    oscillator.frequency.exponentialRampingEnabled = true;
+    // Отправляем параметры звука в Web Worker
+    worker.postMessage({
+        frequency: settings.frequency,
+        duration: settings.duration,
+        sampleRate: audioContext.sampleRate
+    });
     
-    gainNode.gain.value = settings.volume;
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    
-    oscillator.start();
-    
-    const stopTime = audioContext.currentTime + settings.duration;
-    oscillator.stop(stopTime);
-    
-    // Визуализация волны
+    // Визуализация волны с оптимизацией
     if (!settings.soundOnly) {
         visualizeWave();
     }
@@ -254,25 +257,27 @@ function playSound() {
 
 // Остановка звука
 function stopSound() {
-    if (audioContext && oscillator) {
-        oscillator.stop();
-        oscillator.disconnect();
+    if (worker) {
+        worker.terminate();
+        worker = null;
     }
 }
 
-// Визуализация волны
+// Визуализация волны с оптимизацией
 function visualizeWave() {
     const width = waveCanvas.width;
     const height = waveCanvas.height;
     const scale = height / 2;
     const sampleRate = 44100;
     const duration = settings.duration;
-    const samples = Math.min(1000, sampleRate * duration); // Ограничение количества точек для производительности
+    
+    // Адаптивное ограничение точек в зависимости от производительности
+    const samples = window.devicePixelRatio > 1 ? 500 : 200;
     
     // Кешируем вычисления для волны
     const cache = [];
     for (let i = 0; i < samples; i++) {
-        const t = (i / samples) * duration;
+        const t = (i / samples) * settings.duration;
         const x = (i / samples) * width;
         const y = Math.sin(2 * Math.PI * settings.frequency * t) * scale + height / 2;
         cache.push({ x, y });
@@ -300,6 +305,7 @@ function visualizeWave() {
     
     // Анимация волны с оптимизацией
     let startTime = null;
+    let lastTimestamp = 0;
     
     function animateWave(timestamp) {
         if (!startTime) startTime = timestamp;
@@ -307,23 +313,27 @@ function visualizeWave() {
         const progress = elapsed / (settings.duration * 1000);
         
         if (progress < 1) {
-            ctx.clearRect(0, 0, width, height);
-            ctx.beginPath();
-            
-            // Используем кеш для анимации
-            for (let i = 0; i < cache.length; i++) {
-                const point = cache[i];
-                const t = point.x / width + progress;
-                const y = Math.sin(2 * Math.PI * settings.frequency * t) * scale + height / 2;
+            // Проверка минимального времени между кадрами (~60fps)
+            if (timestamp - lastTimestamp >= 16) {
+                ctx.clearRect(0, 0, width, height);
+                ctx.beginPath();
                 
-                if (i === 0) {
-                    ctx.moveTo(point.x, y);
-                } else {
-                    ctx.lineTo(point.x, y);
+                for (let i = 0; i < cache.length; i++) {
+                    const point = cache[i];
+                    const t = point.x / width + progress;
+                    const y = Math.sin(2 * Math.PI * settings.frequency * t) * scale + height / 2;
+                    
+                    if (i === 0) {
+                        ctx.moveTo(point.x, y);
+                    } else {
+                        ctx.lineTo(point.x, y);
+                    }
                 }
+                
+                ctx.stroke();
+                lastTimestamp = timestamp;
             }
             
-            ctx.stroke();
             animationId = requestAnimationFrame(animateWave);
         } else {
             cancelAnimationFrame(animationId);
