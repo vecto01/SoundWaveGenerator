@@ -5,14 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sound Wave Generator</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="test_performance.js"></script>
 </head>
 <body>
-    <div class="header">
-        <h1>Sound Wave Generator</h1>
-    </div>
-    <div class="loading-spinner" id="loading-spinner">
-        <div class="spinner"></div>
+    <div class="loading-spinner hidden" id="loading-spinner">
         <p>Loading...</p>
+        <div class="loading-indicator"></div>
+    </div>
+    <div class="header">
+        <div class="language-selector">
+            <select id="language-selector">
+                <option value="en">English</option>
+                <option value="ru">Русский</option>
+            </select>
+        </div>
+        <div class="theme-selector">
+            <label for="theme-selector">Dark Mode:</label>
+            <select id="theme-selector">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+            </select>
+        </div>
+
+        <h1>Sound Wave Generator</h1>
     </div>
     
     
@@ -33,6 +48,23 @@
                 <input type="range" id="volume" min="0" max="1" step="0.01" value="0.7">
                 <span id="volume-value">0.7</span>
             </div>
+            <div class="setting-item">
+                <label for="animation-speed">Animation Speed:</label>
+                <input type="range" id="animation-speed" min="0.1" max="5" value="1" step="0.1" list="speed-steps">
+                <datalist id="speed-steps">
+                    <option value="0.1">0.1x</option>
+                    <option value="0.5">0.5x</option>
+                    <option value="1">1x</option>
+                    <option value="2">2x</option>
+                    <option value="5">5x</option>
+                </datalist>
+                <span id="animation-speed-value">1x</span>
+            </div>
+            <div class="setting-item">
+                <label for="wave-color">Wave Color:</label>
+                <input type="color" id="wave-color" value="#000000">
+            </div>
+            <div class="setting-item">
             <div class="setting-item">
                 <label>
                     <input type="checkbox" id="sound-only">
@@ -55,6 +87,11 @@
     <div class="wave-container">
         <canvas id="wave-canvas" width="800" height="200"></canvas>
     </div>
+    <div class="fixed-controls-panel">
+        <button id="play-btn-fixed" class="fixed-btn">Play</button>
+        <button id="stop-btn-fixed" class="fixed-btn">Stop</button>
+    </div>
+    <div class="hotkeys-panel" id="hotkeys-panel" style="display: none;">
     
     <div class="hotkeys-panel" id="hotkeys-panel" style="display: none;">
         <h3>Hotkeys</h3>
@@ -67,7 +104,9 @@
         </ul>
         <button id="close-hotkeys">×</button>
     </div>
+    <div class="footer">Sound Wave Generator © 2023</div>
     <input type="file" id="import-file" accept=".json" style="display: none;">
-<script src="script.js"></script>
+    <script src="sound.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

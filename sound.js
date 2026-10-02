@@ -1,3 +1,5 @@
+const worker = new Worker('worker.js');
+
 document.addEventListener('DOMContentLoaded', function() {
     const canvas = document.getElementById('waveform');
     const ctx = canvas.getContext('2d');
@@ -8,6 +10,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentWaveType = 'sine';
     let frequency = 440;
     let amplitude = 0.5;
+    let animationSpeed = 1;
+    let waveColor = '#000000';
     const frequencySlider = document.getElementById('frequency');
     const amplitudeSlider = document.getElementById('amplitude');
     const frequencyValueSpan = document.getElementById('frequencyValue');
@@ -25,11 +29,25 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     amplitudeSlider.addEventListener('input', function() {
-        amplitude = parseFloat(this.value);
+        amplitude = Math.min(parseFloat(this.value), 0.75); // Ограничение для Firefox/Safari
         amplitudeValueSpan.textContent = amplitude;
     });
-    
+
+    const animationSpeedSlider = document.getElementById('animation-speed');
+    const animationSpeedValueSpan = document.getElementById('animation-speed-value');
+    animationSpeedSlider.addEventListener('input', function() {
+        animationSpeed = parseFloat(this.value);
+        animationSpeedValueSpan.textContent = animationSpeed + 'x';
+    });
+
+    const waveColorPicker = document.getElementById('wave-color');
+    waveColorPicker.addEventListener('input', function() {
+        waveColor = this.value;
+    });
+
     waveTypeButtons.forEach((button, index) => {
+    
+
         button.addEventListener('click', function() {
             waveTypeButtons.forEach(btn => btn.style.backgroundColor = '');
             this.style.backgroundColor = '#4CAF50';
@@ -40,10 +58,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Draw waveform
     function drawWaveform() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const t = Date.now() * 0.001;
-        const xStep = canvas.width / 100;
+        const t = Date.now() * 0.001 * animationSpeed;
+        const xStep = canvas.width / 50;
         const yScale = canvas.height / 2;
-        ctx.strokeStyle = '#000';
+        ctx.strokeStyle = waveColor;
         ctx.lineWidth = 2;
         ctx.beginPath();
         for (let i = 0; i <= 50; i++) {
@@ -144,26 +162,37 @@ document.addEventListener('DOMContentLoaded', function() {
     // Fix for Ctrl key handling
     let ctrlPressed = false;
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Control') {
+        if (e.key === 'Control' || e.key === 'Meta') { // Поддержка Ctrl для Windows и Cmd для Mac
             ctrlPressed = true;
         }
     });
     document.addEventListener('keyup', function(e) {
-        if (e.key === 'Control') {
+        if (e.key === 'Control' || e.key === 'Meta') {
             ctrlPressed = false;
         }
     });
 
+    // Проверка состояния audioContext перед изменением параметров
+    function checkAudioContext() {
+        if (audioContext.state !== 'running') {
+            audioContext.resume();
+        }
+    }
+
     document.addEventListener('keydown', function(e) {
         if (e.key === 'ArrowUp' && ctrlPressed) {
-            amplitude = Math.min(amplitude + 0.1, 1);
+            checkAudioContext();
+            amplitude = Math.min(amplitude + 0.1, 0.75); // Ограничение для Firefox/Safari
             amplitudeSlider.value = amplitude;
             amplitudeValueSpan.textContent = amplitude;
+            gainNode.gain.value = amplitude;
         }
         if (e.key === 'ArrowDown' && ctrlPressed) {
+            checkAudioContext();
             amplitude = Math.max(amplitude - 0.1, 0.1);
             amplitudeSlider.value = amplitude;
             amplitudeValueSpan.textContent = amplitude;
+            gainNode.gain.value = amplitude;
         }
     });
 });

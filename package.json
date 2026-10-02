@@ -1,0 +1,30 @@
+{
+  "name": "soundwavegenerator",
+  "version": "1.0.0",
+  "description": "**Интерактивный генератор звуковых волн с визуализацией и горячими клавишами.**",
+  "main": "bs-config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vecto01/SoundWaveGenerator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/vecto01/SoundWaveGenerator/issues"
+  },
+  "homepage": "https://github.com/vecto01/SoundWaveGenerator#readme",
+  "devDependencies": {
+    "chromedriver": "^122.0.1",
+    "geckodriver": "^7.0.0",
+    "selenium-webdriver": "^4.50.0"
+  },
+  "allowScripts": {
+    "geckodriver@7.0.0": true,
+    "chromedriver@122.0.1": true
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "waveGenerator": {
+    "title": "Sound Wave Generator",
+    "description": "Generate and visualize sound waves in real-time.",
+    "frequency": "Frequency",
+    "amplitude": "Amplitude",
+    "waveType": "Wave Type",
+    "soundOnly": "Sound Only",
+    "hotkeys": "Hotkeys",
+    "reset": "Reset",
+    "sinus": "Sine",
+    "square": "Square",
+    "triangle": "Triangle",
+    "language": "Language",
+    "english": "English",
+    "russian": "Russian"
+  }
+}
