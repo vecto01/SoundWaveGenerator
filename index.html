@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Wave Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="header">
+        <h1>Sound Wave Generator</h1>
+    </div>
+    <div class="loading-spinner" id="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+    
+    
+    <div class="controls-panel">
+        <div class="settings-container">
+            <div class="setting-item">
+                <label for="frequency">Frequency (Hz):</label>
+                <input type="range" id="frequency" min="20" max="2000" value="440" step="1">
+                <span id="frequency-value">440</span>
+            </div>
+            <div class="setting-item">
+                <label for="duration">Duration (s):</label>
+                <input type="range" id="duration" min="1" max="10" value="2" step="0.1">
+                <span id="duration-value">2</span>
+            </div>
+            <div class="setting-item">
+                <label for="volume">Volume:</label>
+                <input type="range" id="volume" min="0" max="1" step="0.01" value="0.7">
+                <span id="volume-value">0.7</span>
+            </div>
+            <div class="setting-item">
+                <label>
+                    <input type="checkbox" id="sound-only">
+                    Sound Only
+                </label>
+                <span id="sound-only-info">Hide wave visualization</span>
+            </div>
+        </div>
+        <div class="action-buttons">
+            <button id="play-btn">Play</button>
+            <button id="stop-btn">Stop</button>
+        </div>
+        <div class="export-import">
+            <button id="export-btn">Экспортировать</button>
+            <button id="import-btn">Импортировать</button>
+        </div>
+    </div>
+    </div>
+    
+    <div class="wave-container">
+        <canvas id="wave-canvas" width="800" height="200"></canvas>
+    </div>
+    
+    <div class="hotkeys-panel" id="hotkeys-panel" style="display: none;">
+        <h3>Hotkeys</h3>
+        <ul>
+            <li>1, 2, 3 — Change wave type</li>
+            <li>↑/↓ — Change frequency</li>
+            <li>Ctrl+↑/Ctrl+↓ — Change amplitude</li>
+            <li>Esc — Reset settings</li>
+            <li>Alt+S — Toggle sound only mode</li>
+        </ul>
+        <button id="close-hotkeys">×</button>
+    </div>
+    <input type="file" id="import-file" accept=".json" style="display: none;">
+<script src="script.js"></script>
+</body>
+</html>
