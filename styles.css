@@ -3,51 +3,53 @@
     --text-color: #333;
     --accent-color: #0078d4;
     --loading-color: var(--accent-color);
-    --btn-bg: #e0e0e0;
-    --btn-text: #333;
-    --btn-hover: #d0d0d0;
+    --btn-bg: #fff;
+    --btn-text: #000;
+    --btn-hover: #e9ecef;
     --border-radius: 8px;
-    --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    --transition-speed: 0.3s;
+    --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --transition-speed: 0.2s;
     --btn-play-bg: #4CAF50;
     --btn-play-text: #fff;
     --btn-stop-bg: #F44336;
     --btn-stop-text: #fff;
-    --export-import-bg: #2196F3;
-    --export-import-text: #fff;
+    --export-import-bg: #fff;
+    --export-import-text: #000;
     --btn-high-contrast-bg: #000;
     --btn-high-contrast-text: #fff;
     --slider-thumb-bg: #6c63ff;
     --slider-track-bg: #e0e0e0;
     --section-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --loading-text-color: #007bff;
 }
 
 :root.dark-theme {
     --bg-color: #121212;
     --text-color: #f5f5f5;
     --accent-color: #6c63ff;
-    --btn-bg: #2d2d2d;
-    --btn-text: #f5f5f5;
+    --btn-bg: #fff;
+    --btn-text: #000;
     --btn-hover: #404040;
     --box-shadow: 0 0 15px rgba(108, 99, 255, 0.2);
     --btn-play-bg: #388E3C;
     --btn-play-text: #fff;
     --btn-stop-bg: #D32F2F;
     --btn-stop-text: #fff;
-    --export-import-bg: #0D47A1;
-    --export-import-text: #fff;
+    --export-import-bg: #fff;
+    --export-import-text: #000;
     --btn-high-contrast-bg: #fff;
     --btn-high-contrast-text: #000;
     --slider-thumb-bg: #6c63ff;
     --slider-track-bg: #333;
     --section-shadow: 0 0 4px rgba(108, 99, 255, 0.2);
+    --loading-text-color: #6c63ff;
 }
 
 /* Кнопки */
 .btn-play {
     background-color: var(--btn-play-bg);
     color: var(--btn-play-text);
-    border: none;
+    border: 1px solid var(--btn-bg);
     padding: 10px 20px;
     border-radius: var(--border-radius);
     font-weight: bold;
@@ -59,12 +61,13 @@
 
 .btn-play:hover {
     background-color: var(--accent-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .btn-stop {
     background-color: var(--btn-stop-bg);
     color: var(--btn-stop-text);
-    border: none;
+    border: 1px solid var(--btn-bg);
     padding: 10px 20px;
     border-radius: var(--border-radius);
     font-weight: bold;
@@ -76,12 +79,13 @@
 
 .btn-stop:hover {
     background-color: #E53935;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .btn-export-import {
     background-color: var(--export-import-bg);
     color: var(--export-import-text);
-    border: none;
+    border: 1px solid var(--btn-bg);
     padding: 8px 16px;
     border-radius: 4px;
     font-weight: bold;
@@ -89,10 +93,27 @@
     transition: all var(--transition-speed);
     margin: 0 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: block;
+    width: 100%;
 }
 
 .btn-export-import:hover {
     background-color: var(--accent-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Анимация загрузки */
+.loading-text {
+    color: var(--loading-text-color);
+    font-weight: bold;
+    border-left: 3px solid var(--loading-text-color);
+    animation: spin 1s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 /* Выравнивание элементов */
@@ -111,7 +132,7 @@
 }
 
 .controls-panel h2 {
-    color: #222222;
+    color: var(--text-color);
     margin-bottom: 16px;
     font-size: 1.5rem;
 }
@@ -196,6 +217,8 @@
     box-shadow: var(--section-shadow);
     width: 100%;
     border-top: 1px solid var(--slider-track-bg);
+    overflow-y: auto;
+    max-height: 300px;
 }
 
 .audio-effects-panel h3 {
@@ -206,7 +229,7 @@
     width: 100%;
 }
 
-.effect-item {
+effect-item {
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -227,6 +250,7 @@ effect-item select {
     border-radius: var(--border-radius);
     border: 1px solid var(--btn-bg);
     background-color: var(--bg-color);
+    transition: all var(--transition-speed);
 }
 
 .footer {
@@ -311,6 +335,7 @@ body.rtl {
     .audio-effects-panel {
         padding: 8px;
         margin-top: 15px;
+        max-height: 250px;
     }
     
     .effect-item select {
