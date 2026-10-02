@@ -77,6 +77,27 @@
             <button id="play-btn">Play</button>
             <button id="stop-btn">Stop</button>
         </div>
+        <div class="audio-effects-panel">
+            <h3>Звуковые эффекты</h3>
+            <div class="effect-item">
+                <label>
+                    <input type="checkbox" id="reverb-toggle"> Реверб
+                </label>
+            </div>
+            <div class="effect-item">
+                <label for="filter-selector">Тип фильтра:</label>
+                <select id="filter-selector">
+                    <option value="none">Без фильтра</option>
+                    <option value="lowpass">Низкие частоты</option>
+                    <option value="highpass">Высокие частоты</option>
+                    <option value="bandpass">Полоса пропускания</option>
+                </select>
+            </div>
+            <div class="effect-item">
+                <label for="filter-frequency">Частота (Гц):</label>
+                <input type="range" id="filter-frequency" min="100" max="5000" value="2000">
+            </div>
+        </div>
         <div class="export-import">
             <button id="export-btn">Экспортировать</button>
             <button id="import-btn">Импортировать</button>
@@ -106,6 +127,10 @@
     </div>
     <div class="footer">Sound Wave Generator © 2023</div>
     <input type="file" id="import-file" accept=".json" style="display: none;">
+    <script>
+    // Загрузка Web Worker для обработки аудио
+    const audioWorker = new Worker('workers/audio-worker.js');
+</script>
     <script src="sound.js"></script>
     <script src="script.js"></script>
 </body>
