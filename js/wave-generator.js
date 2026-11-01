@@ -1,4 +1,27 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Мониторинг пропусков кадров для анимации волны
+    function monitorAnimationFrame() {
+        const startTime = performance.now();
+        const frameDuration = 16; // ms (1/60 fps)
+        let frameCount = 0;
+        
+        function checkFrameRate() {
+            const endTime = performance.now();
+            const frameTime = endTime - startTime;
+            
+            if (frameTime > frameDuration * 1.5) { // Превышение допустимого времени
+                console.warn(`Пропуск кадра: ${frameTime}ms > ${frameDuration * 1.5}ms`);
+            }
+            frameCount++;
+            if (frameCount % 10 === 0) {
+                console.log(`Среднее время кадра: ${(performance.now() - startTime) / frameCount}ms`);
+            }
+            requestAnimationFrame(checkFrameRate);
+        }
+        
+        requestAnimationFrame(checkFrameRate);
+    }
+
     // Инициализация интерфейса
     const frequencySlider = document.getElementById('frequency');
     const amplitudeSlider = document.getElementById('amplitude');
@@ -7,7 +30,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const stopButton = document.getElementById('stop-btn');
     const loadingOverlay = document.getElementById('loading-overlay');
     const themeSelector = document.getElementById('theme-selector');
-    const languageSelector = document.getElementById('language-selector');
 
     // Показать загрузку
     function showLoading() {

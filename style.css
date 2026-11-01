@@ -1,0 +1,112 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
+
+/* Основной стиль для тёмной темы */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
+
+/* Кнопки в тёмной теме */
+.btn-primary {
+    background-color: #4a4a4a;
+    color: #e0e0e0;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    animation: fadeIn 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #616161;
+    transform: translateY(-2px);
+}
+
+.btn-primary:disabled {
+    background-color: #333333;
+    cursor: not-allowed;
+}
+
+/* Слайдеры */
+.slider {
+    width: 100%;
+    height: 8px;
+    margin: 10px 0;
+    -webkit-appearance: none;
+    appearance: none;
+    background: #4a4a4a;
+    border-radius: 4px;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #e0e0e0;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 0 #4a4a4a;
+}
+
+.slider::-webkit-slider-runnable-track {
+    background: #4a4a4a;
+    border-radius: 20px;
+}
+
+/* Отступы между блоками */
+.controls-panel {
+    margin-bottom: 2rem;
+    padding: 2rem;
+}
+
+.audio-effects-panel {
+    margin-top: 2rem;
+    border-top: 1px solid #333333;
+    padding-top: 1.5rem;
+}
+
+/* Поля ввода */
+.setting-item input[type="range"] {
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+/* Текстовые метки и значения */
+#frequency-value, #amplitude-value, #reverb-depth-value {
+    color: #e0e0e0;
+    font-weight: bold;
+}
+
+/* Заголовки */
+h1, h3 {
+    color: #e0e0e0;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Показ загрузки */
+.loading-indicator {
+    width: 50px;
+    height: 50px;
+    border: 3px solid #4a4a4a;
+    border-radius: 50%;
+    border-top-color: #e0e0e0;
+    animation: spin 1s linear infinite;
+    margin-top: 1rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Разделение между блоками */
+div[class*="settings-container"]:not(:last-child), div[class*="audio-effects-panel"] {
+    margin-bottom: 2rem;
+}
