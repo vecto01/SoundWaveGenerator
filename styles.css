@@ -25,24 +25,24 @@
 
 :root.dark-theme {
     --bg-color: #121212;
-    --text-color: #E0E0E0;
+    --text-color: #E5E5E5;
     --accent-color: #6c63ff;
-    --btn-bg: #404040;
+    --btn-bg: #2D2D2D;
     --btn-text: #FFFFFF;
-    --btn-hover: #555555;
+    --btn-hover: #444444;
     --btn-active: #4a90e2;
     --box-shadow: 0 0 15px rgba(108, 99, 255, 0.2);
     --btn-play-bg: #388E3C;
-    --btn-play-text: #fff;
+    --btn-play-text: #FFFFFF;
     --btn-stop-bg: #D32F2F;
-    --btn-stop-text: #fff;
-    --export-import-bg: #404040;
+    --btn-stop-text: #FFFFFF;
+    --export-import-bg: #2D2D2D;
     --export-import-text: #FFFFFF;
     --slider-thumb-bg: #B19CD9;
-    --slider-track-bg: #404040;
+    --slider-track-bg: #333333;
     --section-shadow: 0 0 4px rgba(108, 99, 255, 0.2);
     --loading-text-color: #FFFFFF;
-    --label-text: #B0B0B0;
+    --label-text: #C0C0C0;
 }
 
 /* Темная тема для слайдеров */
@@ -367,13 +367,11 @@ body.rtl {
     .effect-item label {
         font-size: 0.9rem;
     }
-
-    /* Убираем дубликат кнопок */
+    
     .duplicate-play-stop {
         display: none;
     }
     
-    /* Адаптивность для лэптопов */
     @media (max-width: 1200px) {
         .container {
             max-width: 100%;
@@ -387,7 +385,6 @@ body.rtl {
         }
     }
     
-    /* Адаптивность для мобильных */
     @media (max-width: 768px) {
         .export-import-buttons {
             display: flex;
@@ -398,57 +395,5 @@ body.rtl {
             gap: 4px;
             margin-bottom: 8px;
         }
-    }
-    }
-}
-        padding: 8px;
-        max-width: 100%;
-    }
-    
-    .setting-item {
-        gap: 6px;
-        margin-bottom: 12px;
-    }
-    
-    .audio-effects-panel {
-        padding: 8px;
-        margin-top: 15px;
-        max-height: 250px;
-    }
-    
-    .effect-item select {
-        padding: 6px;
-    }
-    
-    .footer {
-        margin-top: 20px;
-    }
-    
-    .setting-item label {
-        font-size: 0.8rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .controls-panel {
-        gap: 6px;
-        padding: 6px;
-    }
-    
-    .setting-item {
-        gap: 4px;
-        margin-bottom: 8px;
-    }
-    
-    .audio-effects-panel {
-        padding: 6px;
-    }
-    
-    .btn-export-import {
-        padding: 6px 12px;
-    }
-    
-    .setting-item input[type="range"] {
-        height: 8px;
     }
 }
