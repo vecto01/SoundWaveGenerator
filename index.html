@@ -1,97 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sound Wave Generator</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <script src="js/wave-generator.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sound Wave Generator</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="loading-overlay" class="loading-container">
-        <div class="loading-text">Loading...</div>
-        <div class="loading-indicator"></div>
+  <div class="sound-wave-title">Sound Wave Generator</div>
+  
+  <div class="controls">
+    <button class="btn" id="englishBtn">English</button>
+    <button class="btn" id="darkModeBtn">Dark Mode</button>
+  </div>
+  
+  <div class="sound-wave-section">
+    <div id="waveContainer" style="display: flex; align-items: center; justify-content: center; height: 100vh; flex-direction: column;">
+      <div class="loader"></div>
+      <div class="ready-text">Ready to generate sounds!</div>
     </div>
-    <div class="header">
-        <div class="language-selector">
-            <select id="language-selector">
-                <option value="en">English</option>
-                <option value="ru">Русский</option>
-            </select>
-        </div>
-        <div class="theme-selector">
-            <label for="theme-selector">Dark Mode:</label>
-            <select id="theme-selector">
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
-            </select>
-        </div>
+  </div>
+  
+  <footer class="footer">
+    <p>© 2023 Sound Wave Generator</p>
+  </footer>
 
-        <h1>Sound Wave Generator</h1>
-    </div>
-
-    <div class="controls-panel">
-        <div class="settings-container">
-            <div class="setting-item">
-                <label for="frequency">Frequency (Hz):</label>
-                <input type="range" id="frequency" min="0.1" max="10" value="1.0" step="0.1" aria-label="Set frequency in Hz" aria-describedby="frequency-value">
-                <span id="frequency-value">1.0</span>
-            </div>
-            <div class="setting-item">
-                <label for="amplitude">Amplitude:</label>
-                <input type="range" id="amplitude" min="0.1" max="5" value="1.0" step="0.1" aria-label="Set amplitude level" aria-describedby="amplitude-value">
-                <span id="amplitude-value">1.0</span>
-            </div>
-            <div class="setting-item">
-                <label for="wave-type">Тип волны:</label>
-                <select id="wave-type" aria-label="Тип волны">
-                    <option value="sine" selected>Синусовая</option>
-                    <option value="square">Квадратная</option>
-                    <option value="triangle">Треугольная</option>
-                </select>
-            </div>
-            <div class="action-buttons">
-                <button id="save-btn" class="btn-primary">Save Settings</button>
-            </div>
-        </div>
-        <div style="margin-bottom: 2rem;"></div>
-        <div class="audio-effects-panel">
-            <h3>Звуковые эффекты</h3>
-            <div class="effect-item">
-                <label>
-                    <input type="checkbox" id="reverb-toggle"> Реверб
-                </label>
-            </div>
-            <div style="margin-bottom: 1rem;"></div>
-            <div class="effect-item">
-                <label for="reverb-depth">Глубина реверба:</label>
-                <input type="range" id="reverb-depth" min="0" max="100" value="50" step="1" aria-label="Глубина реверба">
-                <span id="reverb-depth-value">50%</span>
-            </div>
-            <div style="margin-bottom: 2rem;">
-                <label for="filter-selector">Тип фильтра:</label>
-                <select id="filter-selector" aria-label="Тип фильтра">
-                    <option value="none">Без фильтра</option>
-                    <option value="lowpass">Низкочастотный фильтр</option>
-                    <option value="highpass">Высокочастотный фильтр</option>
-                </select>
-            </div>
-        </div>
-    </div>
-    <div id="wave-canvas-container">
-        <canvas id="wave-canvas" width="800" height="400"></canvas>
-    </div>
-    <div class="action-buttons">
-        <button id="play-btn" class="btn-primary">Play</button>
-        <button id="stop-btn" class="btn-primary">Stop</button>
-    </div>
-
-    <!-- Футер с информацией -->
-    <div class="footer">
-        <p>Sound Wave Generator &copy; 2024. Все права защищены.</p>
-        <p>Создано с помощью Vecto.</p>
-    </div>
-
-    <script src="js/wave-generator.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const darkModeBtn = document.getElementById('darkModeBtn');
+      const darkMode = document.documentElement;
+      const loader = document.querySelector('.loader');
+      const readyText = document.querySelector('.ready-text');
+      
+      // Toggle dark mode
+      darkModeBtn.addEventListener('click', function() {
+        darkMode.setAttribute('data-theme', darkMode.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+      });
+      
+      // Скрываем лоадер и показываем текст после загрузки
+      setTimeout(() => {
+        loader.style.display = 'none';
+        readyText.classList.add('visible');
+      }, 1500);
+    });
+  </script>
 </body>
 </html>
