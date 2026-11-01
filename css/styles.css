@@ -1,0 +1,145 @@
+/* Loading animation and styles */
+.loading-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9); /* светлый фон для тёмной темы */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 0.3s ease;
+}
+
+.loading-text {
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.loading-indicator {
+    width: 20px;
+    height: 20px;
+    border: 3px solid #333;
+    border-radius: 50%;
+    border-top-color: #FF6B35; /* яркий оранжевый для анимации */
+    animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Контраст и доступность */
+.slider {
+    --aria-label: "Frequency slider"; /* для слайдеров */
+    --focus-visible-color: #4A90E2; /* синий для фокуса */
+    --slider-track-color: #4A90E2; /* оранжевый для контраста */
+    --slider-handle-color: #FF6B35; /* яркий оранжевый для визуального выделения */
+    --text-color: #333; /* серый для нормального режима */
+    --text-color-dark: #F5F5F5; /* светлый для тёмной темы */
+}
+
+/* Темный режим */
+body.dark-mode {
+    background-color: #2E7D32; /* зеленый для фона */
+    color: #FFFFFF;
+    --slider-track-color: #4A90E2; /* оранжевый на тёмном фоне */
+    --slider-handle-color: #FF6B35; /* яркий оранжевый на тёмном фоне */
+    --text-color: #F5F5F5; /* светлый текст */
+    --text-color-dark: #333; /* серый текст */
+}
+
+body.dark-mode .loading-text {
+    color: #FFFFFF;
+}
+
+body.dark-mode .loading-indicator {
+    border-top-color: #FF6B35; /* оранжевый для анимации */
+}
+
+/* Плавность анимаций */
+body, .loading-container, .setting-item, .effect-item {
+    transition: all 0.3s ease;
+}
+
+/* Кнопки с тенью и :focus-visible */
+.btn-primary {
+    padding: 0.5rem 1rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* тень для выделения */
+    transition: transform 0.2s ease;
+    outline: none; /* удаляем стандартный outline */
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+}
+
+.btn-primary:focus-visible {
+    outline: 2px solid #4A90E2; /* синий для фокуса */
+    box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.3); /* синий полупрозрачный фон */
+}
+
+/* Слайдеры с :focus-visible */
+.slider:focus-visible {
+    outline: 2px solid #4A90E2; /* синий для фокуса */
+}
+
+/* Адаптивные слайдеры и элементы */
+@media (max-width: 768px) {
+    /* Вертикальные слайдеры на мобильных устройствах */
+    .setting-item input[type="range"] {
+        width: 100%;
+        height: 10px;
+        margin-bottom: 5px;
+    }
+    
+    /* Перенести панель звуковых эффектов в столбец */
+    .audio-effects-panel {
+        margin-top: 1rem;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    /* Уменьшить размер кнопок */
+    .btn-primary {
+        padding: 0.3rem 0.8rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Улучшить контраст и отступы */
+    .controls-panel {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    /* Контраст текста */
+    body.dark-mode .controls-panel h3, body.dark-mode .controls-panel label {
+        color: #F5F5F5;
+        font-size: 0.9rem;
+    }
+}
+
+@media (min-width: 769px) {
+    /* Вертикальные слайдеры на лэптопах */
+    .setting-item input[type="range"] {
+        width: 200px;
+        height: 15px;
+    }
+    
+    /* Улучшить расположение элементов */
+    .audio-effects-panel {
+        margin-top: 1.5rem;
+    }
+}

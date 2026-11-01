@@ -6,7 +6,7 @@ class AudioEffects {
         this.audioWorker = audioWorker;
         this.effects = {
             reverb: false,
-            filter: null,
+            reverbDepth: 50,
             filterType: 'none',
             filterFrequency: 2000,
             filterQ: 1.0
@@ -27,7 +27,8 @@ class AudioEffects {
                 type: 'applyEffects',
                 data: {
                     reverb: this.effects.reverb,
-                    filter: this.effects.filterType,
+                    reverbDepth: this.effects.reverbDepth,
+                    filterType: this.effects.filterType,
                     filterFrequency: this.effects.filterFrequency,
                     filterQ: this.effects.filterQ
                 }
@@ -38,6 +39,12 @@ class AudioEffects {
     // Настройка реверба
     setReverb(value) {
         this.effects.reverb = value;
+        this.applyEffects();
+    }
+
+    // Настройка глубины реверба
+    setReverbDepth(value) {
+        this.effects.reverbDepth = value;
         this.applyEffects();
     }
 
@@ -61,4 +68,5 @@ class AudioEffects {
 
 // Экспорт класса
 const audioEffects = new AudioEffects(audioWorker);
+audioEffects.setupHotkeys();
 audioEffects.setupHotkeys();

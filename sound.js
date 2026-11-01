@@ -6,6 +6,7 @@ const audioEffects = new (class AudioEffects {
         this.effectsEnabled = false;
         this.effects = {
             reverb: false,
+            reverbDepth: 50,
             filterType: 'none',
             filterFrequency: 2000,
             filterQ: 1.0
@@ -20,12 +21,20 @@ const audioEffects = new (class AudioEffects {
     applyEffects() {
         audioWorker.postMessage({
             type: 'applyEffects',
-            data: this.effects
+            data: {
+                ...this.effects,
+                applyEffects: this.effectsEnabled
+            }
         });
     }
 
     setReverb(value) {
         this.effects.reverb = value;
+        this.applyEffects();
+    }
+
+    setReverbDepth(value) {
+        this.effects.reverbDepth = value;
         this.applyEffects();
     }
 
@@ -51,211 +60,87 @@ const audioEffects = new (class AudioEffects {
 })();
 audioEffects.init();
 
-// Канал связи с worker
-const audioChannel = {
-    send: (type, data) => audioWorker.postMessage({ type, data }),
-    receive: (callback) => {
-        audioWorker.onmessage = (e) => callback(e.data);
+// Сохранение настроек в localStorage
+function saveSettingsToLocalStorage() {
+    localStorage.setItem('soundWaveSettings', JSON.stringify({
+        frequency,
+        amplitude,
+        currentWaveType,
+        animationSpeed,
+        waveColor,
+        effects: {
+            reverb: audioEffects.effects.reverb,
+            reverbDepth: audioEffects.effects.reverbDepth,
+            filterType: audioEffects.effects.filterType,
+            filterFrequency: audioEffects.effects.filterFrequency,
+            filterQ: audioEffects.effects.filterQ
+        }
+    }));
+}
+
+// Загрузка настроек из localStorage
+function loadSettingsFromLocalStorage() {
+    const savedSettings = localStorage.getItem('soundWaveSettings');
+    if (savedSettings) {
+        const parsedSettings = JSON.parse(savedSettings);
+        frequency = parsedSettings.frequency || frequency;
+        amplitude = parsedSettings.amplitude || amplitude;
+        currentWaveType = parsedSettings.currentWaveType || currentWaveType;
+        animationSpeed = parsedSettings.animationSpeed || animationSpeed;
+        waveColor = parsedSettings.waveColor || waveColor;
+        
+        // Обновляем UI
+        frequencySlider.value = frequency;
+        volumeSlider.value = amplitude;
+        frequencyValueSpan.textContent = frequency;
+        volumeValueSpan.textContent = amplitude;
+        animationSpeedSlider.value = animationSpeed;
+        animationSpeedValueSpan.textContent = animationSpeed + 'x';
+        waveColorPicker.value = waveColor;
+        
+        // Обновляем звуковые эффекты
+        audioEffects.effects.reverb = parsedSettings.effects?.reverb || audioEffects.effects.reverb;
+        audioEffects.effects.reverbDepth = parsedSettings.effects?.reverbDepth || 50;
+        audioEffects.effects.filterType = parsedSettings.effects?.filterType || 'none';
+        audioEffects.effects.filterFrequency = parsedSettings.effects?.filterFrequency || 2000;
+        audioEffects.applyEffects();
     }
-};
+}
 
-// Переменные для хранения состояния
-let currentWaveType = 'sine';
-let frequency = 440;
-let amplitude = 0.5;
-let animationSpeed = 1;
-let waveColor = '#000000';
-const canvas = document.getElementById('wave-canvas');
-const ctx = canvas.getContext('2d');
-const frequencySlider = document.getElementById('frequency');
-const volumeSlider = document.getElementById('volume');
-const frequencyValueSpan = document.getElementById('frequency-value');
-const volumeValueSpan = document.getElementById('volume-value');
-const animationSpeedSlider = document.getElementById('animation-speed');
-const animationSpeedValueSpan = document.getElementById('animation-speed-value');
-const waveColorPicker = document.getElementById('wave-color');
-const soundOnlyCheckbox = document.getElementById('sound-only');
-
-// Инициализация worker
-audioChannel.send('init', { frequency, type: currentWaveType });
-
-// Установка обработчиков событий
-frequencySlider.addEventListener('input', function() {
-    frequency = parseInt(this.value);
-    frequencyValueSpan.textContent = frequency;
-    audioChannel.send('update', { frequency, type: currentWaveType });
+// Обработка глубины реверба
+const reverbDepthSlider = document.getElementById('reverb-depth');
+reverbDepthSlider.addEventListener('input', function() {
+    const value = this.value;
+    document.getElementById('reverb-depth-value').textContent = `${value}%`;
+    audioEffects.setReverbDepth(value);
 });
 
-volumeSlider.addEventListener('input', function() {
-    amplitude = parseFloat(this.value);
-    volumeValueSpan.textContent = amplitude;
-    audioChannel.send('update', { frequency, type: currentWaveType, amp: amplitude });
-});
-
-animationSpeedSlider.addEventListener('input', function() {
-    animationSpeed = parseFloat(this.value);
-    animationSpeedValueSpan.textContent = animationSpeed + 'x';
-});
-
-waveColorPicker.addEventListener('input', function() {
-    waveColor = this.value;
-});
-
-soundOnlyCheckbox.addEventListener('change', function() {
-    if (this.checked) {
-        canvas.style.display = 'none';
-    } else {
-        canvas.style.display = 'block';
-    }
-});
-
-// Установка обработчиков для звуковых эффектов
-const reverbToggle = document.getElementById('reverb-toggle');
+// Обработка типа фильтра
 const filterSelector = document.getElementById('filter-selector');
 const filterFrequencySlider = document.getElementById('filter-frequency');
-
-reverbToggle.addEventListener('change', function() {
-    audioEffects.setReverb(this.checked);
-});
+const filterQSlider = document.getElementById('filter-q');
 
 filterSelector.addEventListener('change', function() {
     const filterType = this.value;
-    audioEffects.setFilter(filterType, filterFrequencySlider.value, 1.0);
+    const frequency = filterFrequencySlider.value;
+    const q = filterQSlider.value;
+    audioEffects.setFilter(filterType, frequency, q);
 });
 
+// Обработка частоты фильтра
 filterFrequencySlider.addEventListener('input', function() {
+    const frequency = this.value;
+    document.getElementById('filter-frequency-value').textContent = frequency;
     const filterType = filterSelector.value;
-    audioEffects.setFilter(filterType, this.value, 1.0);
+    const q = filterQSlider.value;
+    audioEffects.setFilter(filterType, frequency, q);
 });
 
-// Типы волн
-const waveTypeButtons = [
-    document.getElementById('waveType1'),
-    document.getElementById('waveType2'),
-    document.getElementById('waveType3')
-];
-
-waveTypeButtons.forEach((button, index) => {
-    button.addEventListener('click', function() {
-        waveTypeButtons.forEach(btn => btn.style.backgroundColor = '');
-        this.style.backgroundColor = '#4CAF50';
-        currentWaveType = ['sine', 'square', 'triangle'][index];
-        audioChannel.send('update', { frequency, type: currentWaveType });
-    });
+// Обработка Q-фактора
+filterQSlider.addEventListener('input', function() {
+    const q = this.value;
+    document.getElementById('filter-q-value').textContent = q;
+    const filterType = filterSelector.value;
+    const frequency = filterFrequencySlider.value;
+    audioEffects.setFilter(filterType, frequency, q);
 });
-
-// Функция для рисования волны
-function drawWaveform() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const t = Date.now() * 0.001 * animationSpeed;
-    const xStep = canvas.width / 50;
-    const yScale = canvas.height / 2;
-    ctx.strokeStyle = waveColor;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    for (let i = 0; i <= 50; i++) {
-        const x = i * xStep;
-        let y = 0;
-        switch (currentWaveType) {
-            case 'sine': y = Math.sin(t * frequency * 2 * Math.PI) * amplitude; break;
-            case 'square': y = Math.abs(Math.round(Math.sin(t * frequency * 2 * Math.PI))) * amplitude - 0.5; break;
-            case 'triangle': y = (Math.sin(t * frequency * 2 * Math.PI) + Math.sin(t * frequency * 2 * Math.PI * 3)) / (2 * Math.PI) * amplitude; break;
-        }
-        ctx.lineTo(x, canvas.height / 2 + y * yScale);
-    }
-    ctx.stroke();
-    requestAnimationFrame(drawWaveform);
-}
-
-// Управление звуком
-const playBtn = document.getElementById('play-btn');
-const stopBtn = document.getElementById('stop-btn');
-
-playBtn.addEventListener('click', () => {
-    audioChannel.send('start');
-});
-
-stopBtn.addEventListener('click', () => {
-    audioChannel.send('stop');
-});
-
-// Горячие клавиши
-let ctrlPressed = false;
-
-document.addEventListener('keydown', function(e) {
-    switch (e.key) {
-        case 'ArrowUp':
-            frequency += 10;
-            frequencySlider.value = frequency;
-            frequencyValueSpan.textContent = frequency;
-            audioChannel.send('update', { frequency, type: currentWaveType });
-            break;
-        case 'ArrowDown':
-            frequency -= 10;
-            frequencySlider.value = frequency;
-            frequencyValueSpan.textContent = frequency;
-            audioChannel.send('update', { frequency, type: currentWaveType });
-            break;
-        case 'Control':
-            ctrlPressed = true;
-            break;
-        case 'ArrowUp' && ctrlPressed:
-            amplitude = Math.min(amplitude + 0.1, 1);
-            volumeSlider.value = amplitude;
-            volumeValueSpan.textContent = amplitude;
-            audioChannel.send('update', { frequency, type: currentWaveType, amp: amplitude });
-            break;
-        case 'ArrowDown' && ctrlPressed:
-            amplitude = Math.max(amplitude - 0.1, 0.1);
-            volumeSlider.value = amplitude;
-            volumeValueSpan.textContent = amplitude;
-            audioChannel.send('update', { frequency, type: currentWaveType, amp: amplitude });
-            break;
-        case '1':
-            currentWaveType = 'sine';
-            waveTypeButtons.forEach(btn => btn.style.backgroundColor = '');
-            waveTypeButtons[0].style.backgroundColor = '#4CAF50';
-            audioChannel.send('update', { frequency, type: currentWaveType });
-            break;
-        case '2':
-            currentWaveType = 'square';
-            waveTypeButtons.forEach(btn => btn.style.backgroundColor = '');
-            waveTypeButtons[1].style.backgroundColor = '#4CAF50';
-            audioChannel.send('update', { frequency, type: currentWaveType });
-            break;
-        case '3':
-            currentWaveType = 'triangle';
-            waveTypeButtons.forEach(btn => btn.style.backgroundColor = '');
-            waveTypeButtons[2].style.backgroundColor = '#4CAF50';
-            audioChannel.send('update', { frequency, type: currentWaveType });
-            break;
-        case 'Escape':
-            resetSettings();
-            break;
-    }
-});
-
-document.addEventListener('keyup', function(e) {
-    if (e.key === 'Control' || e.key === 'Meta') {
-        ctrlPressed = false;
-    }
-});
-
-// Сброс настроек
-function resetSettings() {
-    frequency = 440;
-    amplitude = 0.5;
-    currentWaveType = 'sine';
-    frequencySlider.value = frequency;
-    volumeSlider.value = amplitude;
-    frequencyValueSpan.textContent = frequency;
-    volumeValueSpan.textContent = amplitude;
-    waveTypeButtons[0].style.backgroundColor = '#4CAF50';
-    waveTypeButtons.forEach((btn, index) => index !== 0 && (btn.style.backgroundColor = ''));
-    audioChannel.send('update', { frequency, type: currentWaveType });
-}
-
-// Запуск визуализации
-if (!soundOnlyCheckbox.checked) {
-    drawWaveform();
-}

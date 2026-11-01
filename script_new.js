@@ -10,6 +10,7 @@ const audioEffects = window.audioEffects || new (() => {
 })();
 
 // Объект для хранения настроек
+let theme = 'light';
 let settings = {
     frequency: 440,
     duration: 2,
@@ -75,6 +76,25 @@ function saveSettings() {
     localStorage.setItem('soundWaveSettings', JSON.stringify(settings));
 }
 
+// Функция для переключения тем
+function toggleTheme(newTheme) {
+    theme = newTheme;
+    if (newTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+    } else {
+        document.body.classList.remove('dark-theme');
+    }
+    localStorage.setItem('theme', newTheme);
+}
+
+// Функция для загрузки сохранённой темы
+function loadTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        toggleTheme(savedTheme);
+    }
+}
+
 // Обновление интерфейса
 function updateUI() {
     frequencySlider.value = settings.frequency;
@@ -84,6 +104,7 @@ function updateUI() {
     volumeSlider.value = settings.volume;
     volumeValue.textContent = settings.volume;
     soundOnlyCheckbox.checked = settings.soundOnly;
+    loadTheme();
 }
 
 // Анимация загрузки
@@ -115,6 +136,12 @@ function init() {
         audioEffects.playWaveChange();
         updateSliderValues();
         saveSettings();
+    });
+
+    loadTheme();
+    const themeSelector = document.getElementById('theme-selector');
+    themeSelector.addEventListener('change', () => {
+        toggleTheme(themeSelector.value);
     });
 
     durationSlider.addEventListener('input', () => {
